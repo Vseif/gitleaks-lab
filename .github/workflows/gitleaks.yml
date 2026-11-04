@@ -1,0 +1,22 @@
+﻿name: GitLeaks Secret Scan
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  gitleaks:
+    name: Scan repository for secrets
+    runs-on: [self-hosted, windows, x64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run GitLeaks
+        shell: powershell
+        run: |
+          docker run --rm `
+            -v "${env:GITHUB_WORKSPACE}:/repo" `
+            zricethezav/gitleaks:v8.27.2 `
+            git /repo --verbose
